@@ -13,22 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Create directories
-        run: |
-          mkdir -p downloaded_packages
-          mkdir -p cached_packages
 
       - name: Download packages if not cached
         id: download_packages
         run: |
-          if [ ! -f "cached_packages/hybrisServer-Platform.zip" ] || \
-             [ ! -f "cached_packages/hybrisServer-AllExtensions.zip" ] || \
-             [ ! -f "cached_packages/jacoco.tgz" ]; then
+         if [ ! -f "cached_packages/package1.zip" ] || [ ! -f "cached_packages/package2.zip" ]; then
             echo "Downloading packages..."
-            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o downloaded_packages/hybrisServer-Platform.zip "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd.03/hybrisServer-Platform.zip"
-            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o downloaded_packages/hybrisServer-AllExtensions.zip "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd.05/hybrisServer-AllExtensions.zip"
-            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o downloaded_packages/jacoco.tgz "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd/jacoco.tgz"
-            mv downloaded_packages/* cached_packages/
+            curl -o file1 https://github.com/actions/actions-runner-controller/discussions/2174
+            curl -o file2 https://igorzhivilo.com/github-actions/github-actions-automatic-scaling
+            mkdir -p cached_packages
+            mv file1 cached_packages/
+            mv file2 cached_packages/
           fi
 
       - name: Cache downloaded packages
