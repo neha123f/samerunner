@@ -11,11 +11,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Download cached packages artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: cached-packages
-          path: cached_packages
+      #- name: Download cached packages artifact
+      #  uses: actions/download-artifact@v2
+       # with:
+         # name: cached-packages
+         # path: cached_packages
 
       - name: Download packages if not cached
         id: download_packages
