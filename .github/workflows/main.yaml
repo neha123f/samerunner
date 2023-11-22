@@ -4,15 +4,14 @@ on:
 
 jobs:
   get-runner:
-    name get a runner to use for this workflow
     if: ${{ always() }}
-     runs-on: custom-runner
-     outputs:
+    runs-on: custom-runner
+    outputs:
       RUNNER: ${{ runner.name }}
-     steps:
+    steps:
       - run: echo "selected runner = ${{ runner.name }}"
 
- other-job:
+  other-job:
     name: another job
     needs: get-runner
     runs-on: ${{needs.get-runner.outputs.RUNNER}}
