@@ -1,0 +1,37 @@
+name: Hybris Package Download Workflow
+
+on:
+ workflow_dispatch:
+
+jobs:
+  download_pkgs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+
+      - name: Download Hybris Installables
+        id: download_pkgs
+        continue-on-error: false
+        run: |
+          echo "Downloading packages"
+          curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -O "https://artifacts.i.shopping.com/artifactory/dcp-sap-generic-releases//hybrisServer-Platform.zip"
+          curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -O "https://artifacts.i.shopping.com/artifactory/dcp-sap-generic-releases/ahybrisServer-AllExtensions.zip"
+          curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -O "https://artifacts.i.shopping.com/artifactory/dcp-sap-generic-releases/jacoco.tgz"
+
+      - name: Cache downloaded packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            hybrisServer-Platform.zip
+            ahybrisServer-AllExtensions.zip
+            jacoco.tgz
+          key: ${{ runner.os }}-pkgs-${{ hashFiles('**/hybrisServer-Platform.zip') }}-${{ hashFiles('**/ahybrisServer-AllExtensions.zip') }}-${{ hashFiles('**/jacoco.tgz') }}
+
+     
