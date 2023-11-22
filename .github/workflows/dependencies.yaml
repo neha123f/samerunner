@@ -1,7 +1,7 @@
 name: quality
 
 on:
- workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   download_and_cache_packages:
@@ -11,24 +11,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-
-      - name: Download packages if not cached
-        id: download_packages
-        run: |
-            if: steps.cahe.outputs.cache-hit != 'true'
-            echo "Downloading packages..."
-            curl -o file1 https://github.com/actions/actions-runner-controller/discussions/2174
-            curl -o file2 https://igorzhivilo.com/github-actions/github-actions-automatic-scaling
-            mkdir -p cached_packages
-            mv file1 cached_packages/
-            mv file2 cached_packages/
-          fi
-
       - name: Cache downloaded packages
-        id: cahe
-        if: success() && steps.download_packages.outputs.stdout != 'Downloading packages...'
         uses: actions/cache@v2
         with:
-         path: cached_packages
-         key: ${{ runner.os }}-${{ hashFiles('cached_packages/**') }}
+          path: cached_packages
+          key: ${{ runner.os }}-${{ hashFiles('cached_packages/**') }}
 
+      - name: Download packages if not cached
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "Downloading packages..."
+          curl -o file1 https://github.com/actions/actions-runner-controller/discussions/2174
+          curl -o file2 https://igorzhivilo.com/github-actions/github-actions-automatic-scaling
+          mkdir -p cached_packages
+          mv file1 cached_packages/
+          mv file2 cached_packages/
