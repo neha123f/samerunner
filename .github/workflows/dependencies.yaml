@@ -1,36 +1,45 @@
-name: Hybris Package Download Workflow
+name: Download and Cache Packages
 
 on:
- workflow_dispatch:
+   workflow_dispatch:
 
 jobs:
-  download_pkgs:
+  download_and_cache_packages:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up JDK
-        uses: actions/setup-java@v2
+      - name: Download cached packages artifact
+        uses: actions/download-artifact@v2
         with:
-          java-version: '11'
-          distribution: 'temurin'
-      - name: Download Hybris Installables
-        id: download_pkgs
-        continue-on-error: false
+          name: cached-packages
+          path: cached_packages
+
+      - name: Download packages if not cached
+        id: download_packages
         run: |
-          echo "Downloading packages"
-           curl -O https://github.com/marketplace/actions/nested-github-runners-action
+          if [ ! -f "cached_packages/hybrisServer-Platform.zip" ] || \
+             [ ! -f "cached_packages/hybrisServer-AllExtensions.zip" ] || \
+             [ ! -f "cached_packages/jacoco.tgz" ]; then
+            echo "Downloading packages..."
+            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o hybrisServer-Platform.zip "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd.03/hybrisServer-Platform.zip"
+            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o hybrisServer-AllExtensions.zip "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd.05/hybrisServer-AllExtensions.zip"
+            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o jacoco.tgz "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd/jacoco.tgz"
+            mkdir -p cached_packages
+            mv hybrisServer-Platform.zip hybrisServer-AllExtensions.zip jacoco.tgz cached_packages/
 
+            # Indicate that downloads occurred in this run
+            echo "::set-output name=downloads-run::true"
+          else
+            # Indicate that downloads did not occur in this run
+            echo "::set-output name=downloads-run::false"
+          fi
 
-      - name: Cache downloaded packages
-        uses: actions/cache@v2
+      - name: Upload cached packages as artifacts
+        if: steps.download_packages.outputs.downloads-run == 'true'
+        uses: actions/upload-artifact@v2
         with:
-          path: |
-            hybrisServer-Platform.zip
-            ahybrisServer-AllExtensions.zip
-            jacoco.tgz
-          key: ${{ runner.os }}-pkgs-${{ hashFiles('**/hybrisServer-Platform.zip') }}-${{ hashFiles('**/ahybrisServer-AllExtensions.zip') }}-${{ hashFiles('**/jacoco.tgz') }}
-
-     
+          name: cached-packages
+          path: cached_packages
