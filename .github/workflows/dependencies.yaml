@@ -1,7 +1,9 @@
 name: Download and Cache Packages
 
 on:
-   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   download_and_cache_packages:
@@ -11,11 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Download cached packages artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: cached-packages
-          path: cached_packages
+      - name: Create directories
+        run: |
+          mkdir -p downloaded_packages
+          mkdir -p cached_packages
 
       - name: Download packages if not cached
         id: download_packages
@@ -24,22 +25,17 @@ jobs:
              [ ! -f "cached_packages/hybrisServer-AllExtensions.zip" ] || \
              [ ! -f "cached_packages/jacoco.tgz" ]; then
             echo "Downloading packages..."
-            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o hybrisServer-Platform.zip "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd.03/hybrisServer-Platform.zip"
-            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o hybrisServer-AllExtensions.zip "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd.05/hybrisServer-AllExtensions.zip"
-            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o jacoco.tgz "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd/jacoco.tgz"
-            mkdir -p cached_packages
-            mv hybrisServer-Platform.zip hybrisServer-AllExtensions.zip jacoco.tgz cached_packages/
-
-            # Indicate that downloads occurred in this run
-            echo "::set-output name=downloads-run::true"
-          else
-            # Indicate that downloads did not occur in this run
-            echo "::set-output name=downloads-run::false"
+            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o downloaded_packages/hybrisServer-Platform.zip "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd.03/hybrisServer-Platform.zip"
+            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o downloaded_packages/hybrisServer-AllExtensions.zip "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd.05/hybrisServer-AllExtensions.zip"
+            curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -o downloaded_packages/jacoco.tgz "https://artifacts.i.mercedes-benz.com/artifactory/dcp-sap-generic-releases/atcpps-custom-sap-hybris/2211/cicd/jacoco.tgz"
+            mv downloaded_packages/* cached_packages/
           fi
 
-      - name: Upload cached packages as artifacts
-        if: steps.download_packages.outputs.downloads-run == 'true'
-        uses: actions/upload-artifact@v2
+      - name: Cache downloaded packages
+        if: steps.download_packages.run.outputs.stdout != ''
+        uses: actions/cache@v2
         with:
-          name: cached-packages
           path: cached_packages
+          key: ${{ runner.os }}-${{ hashFiles('cached_packages/**') }}
+
+      # Continue with your workflow using these downloaded packages
