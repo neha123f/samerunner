@@ -15,7 +15,7 @@ jobs:
       - name: Download packages if not cached
         id: download_packages
         run: |
-         if [ ! -f "cached_packages/package1.zip" ] || [ ! -f "cached_packages/package2.zip" ]; then
+         if [ ! -f "cached_packages/file1" ] || [ ! -f "cached_packages/file2" ]; then
             echo "Downloading packages..."
             curl -o file1 https://github.com/actions/actions-runner-controller/discussions/2174
             curl -o file2 https://igorzhivilo.com/github-actions/github-actions-automatic-scaling
