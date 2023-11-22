@@ -27,7 +27,7 @@ jobs:
           fi
 
       - name: Cache downloaded packages
-        if: steps.download_packages.run.outputs.stdout != ''
+        if: steps.download_packages.run.outputs.stdout != 'true'
         uses: actions/cache@v2
         with:
           path: cached_packages
