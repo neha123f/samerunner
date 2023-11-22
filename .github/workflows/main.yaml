@@ -20,9 +20,7 @@ jobs:
   test:
     runs-on: ${{ needs.build.outputs.runner }}
     needs: build
-    strategy:
-      matrix:
-        runner: [ubuntu-latest] # Add more runners if needed
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
