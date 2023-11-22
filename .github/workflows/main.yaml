@@ -1,0 +1,43 @@
+name: Run Different Jobs
+
+on:
+  #push:
+    #branches:
+     # - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Build Project
+        run: |
+          # Add your build commands here
+
+  test:
+    runs-on: ${{ needs.build.outputs.runner }}
+    needs: build
+    strategy:
+      matrix:
+        runner: [ubuntu-latest] # Add more runners if needed
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Run Tests
+        run: |
+          # Add your test commands here
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Deploy to Production
+        run: |
+          # Add your deployment commands here
