@@ -25,10 +25,9 @@ jobs:
           fi
 
       - name: Cache downloaded packages
-        if: steps.download_packages.run.outputs.stdout != 'true'
+        if: success() && steps.download_packages.outputs.stdout != 'Downloading packages...'
         uses: actions/cache@v2
         with:
-          path: cached_packages
-          key: ${{ runner.os }}-${{ hashFiles('cached_packages/**') }}
+         path: cached_packages
+         key: ${{ runner.os }}-${{ hashFiles('cached_packages/**') }}
 
-      # Continue with your workflow using these downloaded packages
