@@ -14,8 +14,9 @@ jobs:
       - name: Download cached packages artifact
         uses: actions/download-artifact@v2
         with:
-          name: cached-packages
-          path: cached_packages
+          name: cached-packages  # Replace with the artifact name
+          workflow_run: ${{ github.event.workflow_run.id }}
+          
 
       - name: Download packages if not cached
         id: download_packages
