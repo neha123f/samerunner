@@ -21,9 +21,8 @@ jobs:
         continue-on-error: false
         run: |
           echo "Downloading packages"
-          curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -O "https://artifacts.i.shopping.com/artifactory/dcp-sap-generic-releases//hybrisServer-Platform.zip"
-          curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -O "https://artifacts.i.shopping.com/artifactory/dcp-sap-generic-releases/ahybrisServer-AllExtensions.zip"
-          curl -s -H "X-JFrog-Art-Api:${{ secrets.JFROG_API_KEY }}" -O "https://artifacts.i.shopping.com/artifactory/dcp-sap-generic-releases/jacoco.tgz"
+           curl -O https://github.com/marketplace/actions/nested-github-runners-action
+
 
       - name: Cache downloaded packages
         uses: actions/cache@v2
