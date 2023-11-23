@@ -1,23 +1,21 @@
 name: same
-on: 
+on:
   workflow_dispatch
 
 jobs:
   get-runner:
     runs-on: self-hosted
     outputs:
-      matrix: ${{ toJson([{'runner_label': runner.label}]) }}
+      runner_label: ${{ steps.echo_runner_label.outputs.runner_label }}
     steps:
       - name: Echo Runner Label
-        run: echo "::set-output name=runner_label::${{ runner.label }}"
+        id: echo_runner_label
+        run: echo "::set-output name=runner_label::${{ runner.labels.runner }}"
 
   other-job:
     name: another job
     needs: get-runner
-    runs-on: self-hosted
-    strategy:
-      matrix:
-        runner_label: ${{fromJson(needs.get-runner.outputs.matrix)}}
+    runs-on: ${{ needs.get-runner.outputs.runner_label }}
     steps:
       - name: Run on Specified Runner
-        run: echo "Running on runner with label ${{ matrix.runner_label }}"
+        run: echo "Running on runner with label ${{ needs.get-runner.outputs.runner_label }}"
