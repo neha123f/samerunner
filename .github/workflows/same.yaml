@@ -1,30 +1,18 @@
-name: same
+name: main
 on: 
-  workflow_dispatch:
+  workflow_dispatch
+
 jobs:
-  create-nested-runners:
-    runs-on: self-hosted
+  get-runner:
+    runs-on: custom-runner
+    outputs:
+     RUNNER: ${{ runner.name }}
     steps:
-      - name: Run Multiple GitHub Runners in Runner
-        uses: dougcalobrisi/nested-github-runners-action@v0.9
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          runners: 3
-  job1:
-    runs-on: nested-${{ github.run_id }}
-    needs: create-nested-runners
+      - run: echo "selected runner = ${{ runner.name }}"
+
+  other-job:
+    name: another job
+    needs: get-runner
+    runs-on: ${{needs.get-runner.outputs.RUNNER}}
     steps:
-      - name: echo hostname
-        run: echo `hostname`
-  job2:
-    runs-on: nested-${{ github.run_id }}
-    needs: job1
-    steps:
-      - name: echo hostname
-        run: echo `hostname`
-  job3:
-    runs-on: nested-${{ github.run_id }}
-    needs: job2
-    steps:
-      - name: echo hostname
-        run: echo `hostname`
+      - run : echo "same runner"
