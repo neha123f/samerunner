@@ -1,20 +1,18 @@
-name: same
-on: 
-  workflow_dispatch
+name: My Workflow
+
+on:
+ workflow_dispatch:
 
 jobs:
-  get-runner:
-    runs-on: self-hosted
-    outputs:
-      RUNNER: ${{ steps.get-runner-output.outputs.RUNNER }}
+  job1:
+    runs-on: ubuntu-latest
     steps:
-      - name: Get runner info
-        id: get-runner-output
-        run: echo "::set-output name=RUNNER::${{ runner.name }}"
+      - name: First Job
+        run: echo "Running first job"
 
-  other-job:
-    name: another job
-    needs: get-runner
-    runs-on: ${{ needs.get-runner.outputs.RUNNER }}
+  job2:
+    runs-on: ${{ needs.job1.outputs.RUNNER }}
+    needs: job1
     steps:
-      - run: echo "same runner"
+      - name: Second Job
+        run: echo "Running second job on the same runner"
