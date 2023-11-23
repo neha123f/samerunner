@@ -1,18 +1,20 @@
-name: My Workflow
-
-on:
- workflow_dispatch:
+name: main
+on: 
+  push: { branches: [main] }
 
 jobs:
-  job1:
-    runs-on: ubuntu-latest
-    steps:
-      - name: First Job
-        run: echo "Running first job"
+  get-runner:
+    name get a runner for this workflow
+  if: ${{ always() }}
+  runs-on: custom-runner
+   outputs:
+     RUNNER: ${{ runner.name }}
+       steps:
+         - run: echo "selected runner = ${{ runner.name }}"
 
-  job2:
-    runs-on: ${{ needs.job1.outputs.runner }}
-    needs: job1
+  other-job:
+    name: another job
+    needs: get-runner
+    runs-on: ${{needs.get-runner.outputs.RUNNER}}
     steps:
-      - name: Second Job
-        run: echo "Running second job on the same runner"
+      - run : echo "same runner"
