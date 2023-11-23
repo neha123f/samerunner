@@ -1,16 +1,16 @@
 name: same
 on: 
-   workflow_dispatch
+  workflow_dispatch
 
 jobs:
   get-runner:
-    
-    if: ${{ always() }}
     runs-on: self-hosted
     outputs:
-     RUNNER: ${{ runner.label }}
+      RUNNER: ${{ steps.get-runner-output.outputs.RUNNER }}
     steps:
-      - run: echo "selected runner = ${{ runner.name }}"
+      - name: Get runner info
+        id: get-runner-output
+        run: echo "::set-output name=RUNNER::${{ runner.name }}"
 
   other-job:
     name: another job
