@@ -5,7 +5,7 @@ on:
 
 jobs:
   download_and_cache_packages:
-    runs-on: ubuntu-latest
+    runs-on: git1
 
     steps:
       - name: Checkout code
