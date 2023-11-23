@@ -8,7 +8,7 @@ jobs:
     if: ${{ always() }}
     runs-on: self-hosted
     outputs:
-     RUNNER: ${{ runner.name }}
+     RUNNER: ${{ runner.label }}
     steps:
       - run: echo "selected runner = ${{ runner.name }}"
 
