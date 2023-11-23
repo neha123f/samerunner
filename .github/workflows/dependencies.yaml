@@ -5,7 +5,7 @@ on:
 
 jobs:
   download_and_cache_packages:
-    runs-on: git1
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
