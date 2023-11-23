@@ -4,7 +4,7 @@ on:
 
 jobs:
   get-runner:
-    runs-on: custom-runner
+    runs-on: self-hosted
     outputs:
      RUNNER: ${{ runner.name }}
     steps:
