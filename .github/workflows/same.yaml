@@ -6,13 +6,18 @@ jobs:
   get-runner:
     runs-on: self-hosted
     outputs:
-     RUNNER: ${{ runner.name }}
+      matrix: ${{ toJson([{'runner_label': runner.label}]) }}
     steps:
-      - run: echo "selected runner = ${{ runner.name }}"
+      - name: Echo Runner Label
+        run: echo "::set-output name=runner_label::${{ runner.label }}"
 
   other-job:
     name: another job
     needs: get-runner
-    runs-on: ${{needs.get-runner.outputs.RUNNER}}
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        runner_label: ${{fromJson(needs.get-runner.outputs.matrix)}}
     steps:
-      - run : echo "same runner"
+      - name: Run on Specified Runner
+        run: echo "Running on runner with label ${{ matrix.runner_label }}"
