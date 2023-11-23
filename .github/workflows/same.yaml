@@ -6,7 +6,7 @@ jobs:
   get-runner:
     runs-on: self-hosted
     outputs:
-      RUNNER: ${{ steps.get-runner-output.outputs.RUNNER }}
+      RUNNER: ${{ steps.get-runner-output.outputs.RUNNER_LABEL }}
     steps:
       - name: Get runner info
         id: get-runner-output
