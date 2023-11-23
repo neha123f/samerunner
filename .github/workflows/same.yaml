@@ -6,7 +6,7 @@ jobs:
   get-runner:
     runs-on: self-hosted
     outputs:
-      RUNNER: ${{ steps.get-runner-output.outputs.RUNNER_LABEL }}
+      RUNNER: ${{ steps.get-runner-output.outputs.RUNNER }}
     steps:
       - name: Get runner info
         id: get-runner-output
@@ -15,6 +15,6 @@ jobs:
   other-job:
     name: another job
     needs: get-runner
-    runs-on: ${{ needs.get-runner.outputs.RUNNER_LABEL }}
+    runs-on: ${{ needs.get-runner.outputs.RUNNER }}
     steps:
       - run: echo "same runner"
