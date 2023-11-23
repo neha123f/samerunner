@@ -1,21 +1,23 @@
 name: same
-on:
+on: 
   workflow_dispatch
 
 jobs:
   get-runner:
     runs-on: self-hosted
     outputs:
-      runner_label: ${{ steps.echo_runner_label.outputs.runner_label }}
+      runner_label: ${{ steps.set-label.outputs.runner_label }}
     steps:
-      - name: Echo Runner Label
-        id: echo_runner_label
-        run: echo "::set-output name=runner_label::${{ runner.labels.runner }}"
+      - name: Set Runner Label
+        id: set-label
+        run: echo "::set-output name=runner_label::${{ runner.label }}"
 
   other-job:
     name: another job
     needs: get-runner
-    runs-on: ${{ needs.get-runner.outputs.runner_label }}
+    runs-on: self-hosted
+    env:
+      RUNNER_LABEL: ${{ needs.get-runner.outputs.runner_label }}
     steps:
       - name: Run on Specified Runner
-        run: echo "Running on runner with label ${{ needs.get-runner.outputs.runner_label }}"
+        run: echo "Running on runner with label $RUNNER_LABEL"
