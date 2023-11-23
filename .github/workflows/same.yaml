@@ -11,7 +11,7 @@ jobs:
         run: echo "Running first job"
 
   job2:
-    runs-on: ${{ needs.job1.outputs.RUNNER }}
+    runs-on: ${{ needs.job1.outputs.runner }}
     needs: job1
     steps:
       - name: Second Job
