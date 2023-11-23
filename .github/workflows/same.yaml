@@ -5,13 +5,13 @@ on:
 
 jobs:
   job1:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: First Job
         run: echo "Running first job"
 
   job2:
-    runs-on: ${{ needs.job1.outputs.RUNNER }}
+    runs-on: \${{ needs.job1.outputs.RUNNER }}
     needs: job1
     steps:
       - name: Second Job
