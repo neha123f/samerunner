@@ -6,7 +6,7 @@ jobs:
   get-runner:
  
     if: ${{ always() }}
-    runs-on: custom-runner
+    runs-on: self-hosted
     outputs:
      RUNNER: ${{ runner.name }}
     steps:
