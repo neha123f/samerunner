@@ -1,23 +1,20 @@
 name: same
 on: 
-  workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   get-runner:
-    runs-on: self-hosted
+ 
+    if: ${{ always() }}
+    runs-on: custom-runner
     outputs:
-      runner_label: ${{ steps.set-label.outputs.runner_label }}
+     RUNNER: ${{ runner.name }}
     steps:
-      - name: Set Runner Label
-        id: set-label
-        run: echo "::set-output name=runner_label::${{ runner.label }}"
+      - run: echo "selected runner = ${{ runner.name }}"
 
   other-job:
     name: another job
     needs: get-runner
-    runs-on: self-hosted
-    env:
-      RUNNER_LABEL: ${{ needs.get-runner.outputs.runner_label }}
+    runs-on: ${{needs.get-runner.outputs.RUNNER}}
     steps:
-      - name: Run on Specified Runner
-        run: echo "Running on runner with label $RUNNER_LABEL"
+      - run : echo "same = ${{ runner.name }}"
